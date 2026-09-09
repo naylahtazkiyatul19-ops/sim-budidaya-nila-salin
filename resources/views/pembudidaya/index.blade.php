@@ -1,3 +1,4 @@
+@extends('layouts.app') {{-- Sesuaikan 'layouts.app' dengan file layout utama Anda (misal: layouts.main atau layouts.dashboard) --}}
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -50,7 +51,7 @@
 </head>
 <body>
     <!-- Navbar -->
-    <nav class="navbar">
+    <!-- <nav class="navbar">
         <div class="brand">
             <i class="fas fa-fish"></i>
             <span>SIM Nila Salin</span>
@@ -67,85 +68,87 @@
                 </button>
             </form>
         </div>
-    </nav>
+    </nav> -->
 
     <!-- Main Content -->
-    <div class="main">
-        <div class="page-title">
-            <h1><i class="fas fa-users text-cyan"></i> Data <span class="highlight">Pembudidaya</span></h1>
-            <p>Kelola data pembudidaya ikan nila salin di Desa Wanantara</p>
+    @section('content')
+<div class="main">
+    <div class="page-title">
+        <h1><i class="fas fa-users text-cyan"></i> Data <span class="highlight">Pembudidaya</span></h1>
+        <p>Kelola data pembudidaya ikan nila salin di Desa Wanantara</p>
+    </div>
+
+    @if(session('success'))
+        <div class="alert-success alert-dismissible fade show" role="alert" style="padding:12px 16px; margin-bottom:20px; border-radius:10px;">
+            <i class="fas fa-check-circle me-2"></i> {{ session('success') }}
+            <button type="button" class="btn-close float-end" data-bs-dismiss="alert" aria-label="Close" style="filter: invert(1);"></button>
         </div>
+    @endif
 
-        @if(session('success'))
-            <div class="alert-success alert-dismissible fade show" role="alert" style="padding:12px 16px; margin-bottom:20px; border-radius:10px;">
-                <i class="fas fa-check-circle me-2"></i> {{ session('success') }}
-                <button type="button" class="btn-close float-end" data-bs-dismiss="alert" aria-label="Close" style="filter: invert(1);"></button>
+    <div class="d-flex justify-content-end mb-3">
+        <a href="{{ route('pembudidaya.create') }}" class="btn btn-cyan">
+            <i class="fas fa-plus me-2"></i> Tambah Pembudidaya
+        </a>
+    </div>
+
+    <div class="card">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Nama</th>
+                            <th>Alamat</th>
+                            <th>No HP</th>
+                            <th>UMKM</th>
+                            <th style="text-align:center;">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse($pembudidaya as $item)
+                        <tr>
+                            <td>{{ $loop->iteration }}</td>
+                            <td><strong>{{ $item->nama }}</strong></td>
+                            <td>{{ Str::limit($item->alamat, 30) }}</td>
+                            <td>{{ $item->no_hp ?? '-' }}</td>
+                            <td>{{ $item->nama_umkm ?? '-' }}</td>
+                            <td style="text-align:center;">
+                                <a href="{{ route('pembudidaya.show', $item->id) }}" class="btn btn-outline-cyan btn-sm">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                <a href="{{ route('pembudidaya.edit', $item->id) }}" class="btn btn-warning btn-sm">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <form action="{{ route('pembudidaya.destroy', $item->id) }}" method="POST" style="display:inline-block;" onsubmit="return confirm('Apakah Anda yakin ingin menghapus data ini?')">
+                                    @csrf @method('DELETE')
+                                    <button type="submit" class="btn btn-danger btn-sm">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                        @empty
+                        <tr>
+                            <td colspan="6" class="text-center text-secondary py-4">
+                                <i class="fas fa-users fa-2x d-block mb-2" style="color:#475569;"></i>
+                                Belum ada data pembudidaya
+                            </td>
+                        </tr>
+                        @endforelse
+                    </tbody>
+                </table>
             </div>
-        @endif
-
-        <div class="d-flex justify-content-end mb-3">
-            <a href="{{ route('pembudidaya.create') }}" class="btn btn-cyan">
-                <i class="fas fa-plus me-2"></i> Tambah Pembudidaya
-            </a>
         </div>
-
-        <div class="card">
-            <div class="card-body p-0">
-                <div class="table-responsive">
-                    <table class="table table-hover mb-0">
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Nama</th>
-                                <th>Alamat</th>
-                                <th>No HP</th>
-                                <th>UMKM</th>
-                                <th style="text-align:center;">Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @forelse($pembudidaya as $item)
-                            <tr>
-                                <td>{{ $loop->iteration }}</td>
-                                <td><strong>{{ $item->nama }}</strong></td>
-                                <td>{{ Str::limit($item->alamat, 30) }}</td>
-                                <td>{{ $item->no_hp ?? '-' }}</td>
-                                <td>{{ $item->nama_umkm ?? '-' }}</td>
-                                <td style="text-align:center;">
-                                    <a href="{{ route('pembudidaya.show', $item->id) }}" class="btn btn-outline-cyan btn-sm">
-                                        <i class="fas fa-eye"></i>
-                                    </a>
-                                    <a href="{{ route('pembudidaya.edit', $item->id) }}" class="btn btn-warning btn-sm">
-                                        <i class="fas fa-edit"></i>
-                                    </a>
-                                    <form action="{{ route('pembudidaya.destroy', $item->id) }}" method="POST" style="display:inline-block;" onsubmit="return confirm('Apakah Anda yakin ingin menghapus data ini?')">
-                                        @csrf @method('DELETE')
-                                        <button type="submit" class="btn btn-danger btn-sm">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
-                                    </form>
-                                </td>
-                            </tr>
-                            @empty
-                            <tr>
-                                <td colspan="6" class="text-center text-secondary py-4">
-                                    <i class="fas fa-users fa-2x d-block mb-2" style="color:#475569;"></i>
-                                    Belum ada data pembudidaya
-                                </td>
-                            </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-            <div class="card-footer bg-transparent border-top border-secondary" style="border-color:rgba(0,212,255,0.05) !important;">
-                <div class="d-flex justify-content-between align-items-center">
-                    <span class="text-secondary" style="font-size:13px;">Menampilkan {{ $pembudidaya->firstItem() ?? 0 }} - {{ $pembudidaya->lastItem() ?? 0 }} dari {{ $pembudidaya->total() }} data</span>
-                    {{ $pembudidaya->links() }}
-                </div>
+        <div class="card-footer bg-transparent border-top border-secondary" style="border-color:rgba(0,212,255,0.05) !important;">
+            <div class="d-flex justify-content-between align-items-center">
+                <span class="text-secondary" style="font-size:13px;">Menampilkan {{ $pembudidaya->firstItem() ?? 0 }} - {{ $pembudidaya->lastItem() ?? 0 }} dari {{ $pembudidaya->total() }} data</span>
+                {{ $pembudidaya->links() }}
             </div>
         </div>
     </div>
+</div>
+@endsection
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
